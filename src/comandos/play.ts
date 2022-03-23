@@ -3,6 +3,8 @@ import { Message } from "discord.js";
 import getVideoId from "get-video-id";
 import ytdl from "ytdl-core";
 const yts = require( 'yt-search' )
+const voice = require('@discordjs/voice');
+
 
 export async function play(message: Message, vars: any) {
     const args = message.content.split(" ");
@@ -120,9 +122,7 @@ export async function playInterno(guild, song, message, vars) {
         vars.queue.delete(guild.id);
         message.channel.send(`A fila acabou!`);
         if(serverQueue.connection){
-            var subscription = serverQueue.connection.subscribe(vars.player);
-            vars.player.stop();
-            subscription.unsubscribe();
+            voice.getVoiceConnection(guild.id).disconnect();
         }
         return;
     }
@@ -132,8 +132,8 @@ export async function playInterno(guild, song, message, vars) {
     
     setTimeout(() => {
         vars.player.on(AudioPlayerStatus.Idle, () => {
-            serverQueue.songs.shift();
             playInterno(guild, serverQueue.songs[0], message, vars);
+            serverQueue.songs.shift();
         });
     }, 5000);
     
