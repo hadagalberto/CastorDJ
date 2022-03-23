@@ -10,7 +10,7 @@ import { skip } from './comandos/skip';
 import { musicStop } from './comandos/stop';
 import uptime from './comandos/uptime';
 import userid from './comandos/userid';
-const { admins } = require ('./config.json');
+const fs = require('fs')
 
 class Bot {
     
@@ -48,7 +48,7 @@ class Bot {
                     noSubscriber: NoSubscriberBehavior.Pause
                 }
             }),
-            admins: admins
+            admins: JSON.parse(fs.readFileSync('./config.json', 'utf8')).admins
         }
         this.setupCommands();
         this.client.on("ready", () => {
