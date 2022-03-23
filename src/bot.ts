@@ -1,12 +1,16 @@
 import { createAudioPlayer, NoSubscriberBehavior } from '@discordjs/voice';
 import { Client, Intents, Message } from 'discord.js';
 import { artist } from './comandos/artist';
+import isAdmin from './comandos/isAdmin';
 import { list } from './comandos/list';
 import { next } from './comandos/next';
 import { play } from './comandos/play';
 import servers from './comandos/servers';
 import { skip } from './comandos/skip';
 import { musicStop } from './comandos/stop';
+import uptime from './comandos/uptime';
+import userid from './comandos/userid';
+const { admins } = require ('./config.json');
 
 class Bot {
     
@@ -44,6 +48,7 @@ class Bot {
                     noSubscriber: NoSubscriberBehavior.Pause
                 }
             }),
+            admins: admins
         }
         this.setupCommands();
         this.client.on("ready", () => {
@@ -75,12 +80,23 @@ class Bot {
             } else if(message.content.startsWith(`${this.prefix}artista`) || message.content.startsWith(`${this.prefix}art`)) {
                 artist(message, this.vars);
                 return;
-            } else if(message.content.startsWith(`${this.prefix}pnext`) || message.content.startsWith(`${this.prefix}pn`)) {
+            } else if(message.content.startsWith(`${this.prefix}pnext`) || message.content.startsWith(`${this.prefix}pn `)) {
                 next(message, this.vars);
-                return;
+                return;                
             } else if(message.content.startsWith(`${this.prefix}servers`) ) {
                 servers(message, this.vars);
                 return;
+            } else if(message.content.startsWith(`${this.prefix}uptime`) || message.content.startsWith(`${this.prefix}up`)) {
+                uptime(message, this.vars);
+                return;
+            } else if(message.content.startsWith(`${this.prefix}isadmin`) || message.content.startsWith(`${this.prefix}ia`)) {
+                isAdmin(message, this.vars);
+                return;
+            } else if(message.content.startsWith(`${this.prefix}userid` || `${this.prefix}uid`)) {
+                userid(message, this.vars);
+                return;
+            } else if(message.content.startsWith(`${this.prefix}setactivity` || `${this.prefix}sa`)) {
+                this.sendMessage(message, "**Erro:** Informe uma atividade.");
             } else if(message.content.startsWith(`${this.prefix}help`)) {
                 this.sendMessage(message, `Olá, eu sou o ${this.client.user.username}\n` +
                 "Para usar meus comandos, digite:\n" +
@@ -90,6 +106,11 @@ class Bot {
                 "`" + this.prefix + "list` ou `" + this.prefix + "l` - Para listar as músicas que estão tocando\n" +
                 "`" + this.prefix + "artista` ou `" + this.prefix + "art` - Para adicionar 10 músicas de um artista/grupo\n" +
                 "`" + this.prefix + "pnext` ou `" + this.prefix + "pn` - Para adicionar uma música para ser tocada a seguir\n" +
+                "`" + this.prefix + "servers` - Para ver quantos servidores estão conectados\n" +
+                "`" + this.prefix + "uptime` ou `" + this.prefix + "up` - Para ver o tempo de atividade do bot\n" +
+                "`" + this.prefix + "isadmin` ou `" + this.prefix + "ia` - Para ver se você é um administrador\n" +
+                "`" + this.prefix + "userid` ou `" + this.prefix + "uid` - Para ver o seu ID\n" +
+                "`" + this.prefix + "setactivity` ou `" + this.prefix + "sa` - Para alterar a atividade do bot\n" +
                 "`" + this.prefix + "ping` - Para ver se o bot está online\n" +
                 "`" + this.prefix + "help` - Para ver os comandos`");
                 return;
