@@ -121,9 +121,7 @@ export async function playInterno(guild, song, message, vars) {
     if(!song) {
         vars.queue.delete(guild.id);
         message.channel.send(`A fila acabou!`);
-        if(serverQueue.connection){
-            voice.getVoiceConnection(guild.id).disconnect();
-        }
+        voice.getVoiceConnection(guild.id).disconnect();
         return;
     }
     
