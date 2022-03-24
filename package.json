@@ -21,7 +21,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\"",
-    "start": "tsc && node dist/app.js",
+    "start": "tsc && node dist/start.js",
+    "dev": "tsc && cd dist/ && node start.js",
     "build": "tsc"
   },
   "author": "Hadagalberto Junior",
