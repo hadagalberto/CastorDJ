@@ -18,8 +18,9 @@
     "ytdl-core": "^4.11.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node dist/app.js"
+    "test": "echo \"Error: no test specified\"",
+    "start": "tsc && node dist/app.js",
+    "build": "tsc"
   },
   "author": "Hadagalberto Junior",
   "license": "ISC",
