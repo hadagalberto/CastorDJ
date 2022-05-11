@@ -136,7 +136,9 @@ export async function playInterno(guild, song, message, vars) {
             } else {
                 vars.queue.delete(guild.id);
                 message.channel.send(`A fila acabou!`);
-                voice.getVoiceConnection(guild.id).disconnect();
+                setTimeout(() => {
+                    voice.getVoiceConnection(guild.id).disconnect();
+                }, 30000);
             }
         });
     }, 5000);
