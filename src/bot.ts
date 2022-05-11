@@ -11,6 +11,7 @@ import { musicStop } from './comandos/stop';
 import uptime from './comandos/uptime';
 import userid from './comandos/userid';
 const fs = require('fs')
+const worker = require('worker_threads');
 
 class Bot {
     
@@ -22,7 +23,7 @@ class Bot {
     constructor() {
     }
     
-    async authenticate(_token: string, _prefix: string): Promise<Client> {
+    authenticate(_token: string, _prefix: string): Promise<Client> {
         var promise = new Promise<Client>((resolve) => {
             this.client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
             this.prefix = _prefix;
@@ -50,7 +51,7 @@ class Bot {
             }),
             admins: JSON.parse(fs.readFileSync('./config.json', 'utf8')).admins
         }
-        this.setupCommands();
+        await this.setupCommands();
         this.client.on("ready", () => {
             console.log(this.client.user.username + " está presente em " + this.client.guilds.cache.size + " servidores.");
             this.client.user.setActivity("zraizen_", {type: "STREAMING", url: "https://www.twitch.tv/zraizen_"});
@@ -58,12 +59,14 @@ class Bot {
     }
     
     async setupCommands() {
-        this.client.on('message', (message: Message) => {
+        this.client.on('message', async (message: Message) => {
             if(message.author.bot) return;
             if(!message.content.startsWith(this.prefix)) return;
             
             if(message.content.startsWith(`${this.prefix}play`) || message.content.startsWith(`${this.prefix}p `)) {
+                
                 play(message, this.vars);
+                
                 return;
             } else if(message.content.startsWith(`${this.prefix}skip`) || message.content.startsWith(`${this.prefix}s`) && !message.content.startsWith(`${this.prefix}st`) && !message.content.startsWith(`${this.prefix}stop`) && !message.content.startsWith(`${this.prefix}servers`)) {
                 skip(message, this.vars);

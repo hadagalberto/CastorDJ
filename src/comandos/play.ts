@@ -127,11 +127,17 @@ export async function playInterno(guild, song, message, vars) {
     
     const resource = createAudioResource(ytdl(song.url, { filter: "audioonly", quality: "highestaudio", highWaterMark: 1 << 25 }));
     vars.player.play(resource);
-    serverQueue.songs.shift();
     
     setTimeout(() => {
         vars.player.on(AudioPlayerStatus.Idle, () => {
-            playInterno(guild, serverQueue.songs[0], message, vars);
+            serverQueue.songs.shift();
+            if(serverQueue.songs.length > 0){
+                playInterno(guild, serverQueue.songs[0], message, vars);
+            } else {
+                vars.queue.delete(guild.id);
+                message.channel.send(`A fila acabou!`);
+                voice.getVoiceConnection(guild.id).disconnect();
+            }
         });
     }, 5000);
     
