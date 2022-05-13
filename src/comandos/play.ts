@@ -128,26 +128,32 @@ export async function playInterno(guild, song, message, vars) {
     const resource = createAudioResource(ytdl(song.url, { filter: "audioonly", quality: "highestaudio", highWaterMark: 1 << 25 }));
     vars.player.play(resource);
     
-    vars.player.on(AudioPlayerStatus.Idle, () => {
-        serverQueue.songs.shift();
-        if(serverQueue.songs.length > 0){
-            playInterno(guild, serverQueue.songs[0], message, vars);
-        } else {
-            vars.queue.delete(guild.id);
-            message.channel.send(`A fila acabou!`);
-            setTimeout(() => {
-                voice.getVoiceConnection(guild.id).disconnect();
-            }, 30000);
-        }
-    });
+    if(!serverQueue.isPlaying){
+        setInterval(() => {
+            vars.player.on(AudioPlayerStatus.Idle, () => {
+                serverQueue.songs.shift();
+                if(serverQueue.songs.length > 0){
+                    playInterno(guild, serverQueue.songs[0], message, vars);
+                } else {
+                    vars.queue.delete(guild.id);
+                    message.channel.send(`A fila acabou!`);
+                    setTimeout(() => {
+                        voice.getVoiceConnection(guild.id).disconnect();
+                    }, 30000);
+                }
+            });
+        }, 5000);
+    }
     
     vars.player.on('error', (err) => {
-        console.error(err);
+        console.error("Erro no player: " + err);
     });
     
     serverQueue.connection.subscribe(vars.player);
     serverQueue.isPlaying = true;
     vars.queue.set(guild.id, serverQueue);
+    
+    
     
     serverQueue.textChannel.send(`Tocando: **${song.title}** - ${song.url}`);
 }
